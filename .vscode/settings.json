@@ -1,0 +1,62 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+	"advpl.environments": [
+		{
+			"environment": "NB9H7R_TESTE",
+			"name": "NB9H7R_TESTE",
+			"server": "NB9H7R-tst-protheus.totvscloud.com.br",
+			"port": "10020",
+			"serverVersion": "191205P",
+			"passwordCipher": "mKIxKcVAsKA3fc2kRHWl5Oe7TJmb6KDCJFN7MQndzyG7RNwSaddWfmAGgJFC1Z38AAm+dhAi9A8WONgohYG1Bpc6=",
+			"includeList": "C:\\Totvs\\Includes\\",
+			"user": "admin",
+			"smartClientPath": "C:\\Totvs\\Protheus_GlobalTeste\\",
+			"enable": true,
+			"ssl": false
+		},
+		{
+			"environment": "EURAI",
+			"name": "EURAI",
+			"server": "NB9H7R-prd-protheus.totvscloud.com.br",
+			"port": "10001",
+			"serverVersion": "191205P",
+			"passwordCipher": "QUS0ThBv9IesywpksrLOfF57Me9Rv0xt0187QqPTLymoPvAruB/67lVsywM8Ztj6AAnYY7o/k1CRtowlYPBAuXkY=",
+			"includeList": "c:\\Totvs\\Includes\\",
+			"user": "Admin",
+			"smartClientPath": "c:\\Totvs\\Protheus_Globalfruit\\",
+			"enable": true,
+			"ssl": false
+		}
+	],
+	"advpl.alpha_compile": true,
+	"advpl.compile_force_recompile": true,
+	"advpl.debug_multiThread": false,
+	"advpl.compileFolderRegex": ".*\\.(pr[wxg]|ap[whl]|t?res|png|bmp|tlpp|htm|md|html)",
+	"advpl.debug_ignoreSourceNotFound": true,
+	"advpl.debug_showPrivates": true,
+	"advpl.debug_showPublic": true,
+	"advpl.debug_showStatics": true,
+	"advpl.debug_showTables": true,
+    "advpl.workspaceFolders": "C:\\Totvs\\Projetos;",
+	"advpl.logger": true,
+	"files.encoding": "windows1252",
+	"editor.insertSpaces": false,
+	"editor.tabSize": 4,
+	"editor.detectIndentation": false,
+	"editor.formatOnPaste": true,
+	"editor.formatOnSave": false,
+	"editor.trimAutoWhitespace": true,
+	"files.trimTrailingWhitespace": true,
+	"editor.minimap.enabled": false,
+	"git.ignoreLimitWarning": true,
+	"files.exclude": {
+		"**/.tmp": true
+	},
+	"[advpl]": {
+		"editor.insertSpaces":  false,
+		"editor.formatOnSave": true
+	},
+	"totvsLanguageServer.welcomePage": false,
+	"advpl.selectedEnvironment": "EURAI",
+	"totvsLanguageServer.askCompileResult": true
+}
