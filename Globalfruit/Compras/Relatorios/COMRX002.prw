@@ -168,9 +168,7 @@ If lOk
 Return
 
 /*/{Protheus.doc} ImpProxPag
-
     Imprime cabe�lho da proxima pagina
-
     @author  Rafael Fran�a
     @since   09/02/2021
 /*/
@@ -278,9 +276,7 @@ Static Function ValidPerg(cPerg)
 Return()
 
 /*/{Protheus.doc} xValFonte
-
 	Descrição: Realiza o encapsulamento da função TFONT
-
 	@author    Rafael Fran�a
 	@version   1.00
 	@since     09/02/2021
@@ -300,9 +296,7 @@ User Function xValFonte(nTam,lBold,lLine,lItalic,cFont)
 Return oFonte
 
 /*/{Protheus.doc} XCABECA
-
 	Monta um cabeçalho pré-definido de acordo com a orientação do objeto
-
 	@author    Rafael Fran�a
 	@version   1.0
 	@since     09/02/2021
@@ -316,7 +310,6 @@ User Function XCABECA(oPrint,cTitle,cSubTitle,nPage, lBlackWhite)
 	Default cSubTitle := ""
 
 	cData := SUBSTRING(cData,7,2) + "/" +  SUBSTRING(cData,5,2)  + "/" + SUBSTRING(cData,1,4)
-
 
 	If oPrint:GetOrientation() == 1
 
@@ -356,9 +349,7 @@ Return 130
 
 
 /*/{Protheus.doc} XRODAPE
-
 	Monta um rodapé pré-definido de acordo com a orientação do objeto
-
 	@author    Rafael Fran�a
 	@version   1.0
 	@since     09/02/2021
@@ -372,7 +363,6 @@ User Function XRODAPE(oPrint,cFonteBase,cMsgPad)
 
 	If oPrint:GetOrientation() == 1
 		oPrint:Box (815, 10, 830, 580, "-4")
-
 		oPrint:SayAlign(819,20,cMsgPad + u_xInspFonte(cFonteBase),oFont8, 555, 20, /*[ nClrText]*/, 1, 1)
 	Else
 		oPrint:Box (580, 10, 595, 830, "-4")
@@ -393,7 +383,9 @@ User function xInspFonte(cFonte)
 	cData := SUBSTRING(cData,7,2) + "/" +  SUBSTRING(cData,5,2)  + "/" + SUBSTRING(cData,1,4)
 
 	U_XVERSAO()
+
 	aData := GetAPOInfo(cFonte)//aFontes[nI])
+
 	/*
     Modos de compilação:
     Valor                     Descrição
@@ -410,13 +402,11 @@ User function xInspFonte(cFonte)
 	cRet += " USR " + __cUserId
 	//cRet += " EMITIDO " + dtoc(DATE()) + " - " + TIME()
 	cRet += " EMITIDO " + cData + " - " + TIME()
+
 Return cRet
 
-
 /*/{Protheus.doc} XVERSAO
-
 	Cria uma variável pública baseada no CHANGELOG. MD
-
 	@author  Rafael Fran�a
 	@since   09/02/2021
 /*/
