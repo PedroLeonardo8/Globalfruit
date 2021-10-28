@@ -3,10 +3,10 @@
 #INCLUDE 'RPTDEF.CH'
 
 
-#DEFINE REL_VERT_STD 18
+#DEFINE REL_VERT_STD 24
 #DEFINE REL_START  65
-//#DEFINE REL_END 560 //Paisagem
-#DEFINE REL_END 700 //Retrato
+#DEFINE REL_END 540 //Paisagem
+//#DEFINE REL_END 700 //Retrato
 #DEFINE REL_RIGHT 820
 #DEFINE REL_LEFT 10
 
@@ -18,6 +18,10 @@ Relatorio de conferencia a cega do documento de entrada
 @since 09/02/2021
 @return return_type, return_description
 /*/
+
+//Controle de alteração
+//27/10/2021 - Rafael França - Ajustes pedidos pelo Sr. Leomar. Impresão paisagem, Codigo do Fornecedor no titulo e ajuste no tamanho dos campos para o novo codigo do produto.
+
 User Function COMRX002()
 
 	Local _cPerg    := "COMRX002B"
@@ -54,6 +58,7 @@ imprimir relatorio em pdf
 @since 09/02/2021
 @return return_type, return_description
 /*/
+
 Static Function fProcPdf()
 
 	Local nRegAtu	:= 0
@@ -85,18 +90,17 @@ Static Function fProcPdf()
 
 	(cTmp1)->(DbGoTop())
 
-	cFileName 	:= "CONFERENCIA_RECEBIMENTO_"+cDoc+cSerie+cFornece+cLoja+"_COMRX002"
+	cFileName 	:= "CONFERÊNCIA_RECEBIMENTO_"+cDoc+cSerie+cFornece+cLoja+"_COMRX002"
 	oPrint := FWMSPrinter():New(cFileName, IMP_PDF, .F., cDir, .T.)
-	oPrint:SetPortrait()//Retrato
-	//	oPrint:SetLandScape()//Paisagem
+	//oPrint:SetPortrait()//Retrato
+	oPrint:SetLandScape()//Paisagem
 	oPrint:SetPaperSize(DMPAPER_A4)
 	oPrint:cPathPDF := cDir
-
 
 	While (cTmp1)->(!Eof())
 
 If lOk
-		cNomFor		:= Alltrim((cTmp1)->NOME)
+		cNomFor		:= Alltrim((cTmp1)->CLIFOR) + " - " + Alltrim((cTmp1)->NOME)
 		ImpProxPag()//Monta cabeçario da primeira e proxima pagina
 		lOk      	:= .F.
 		EndIf
@@ -105,12 +109,12 @@ If lOk
 		// Atualiza regua de processamento
 		IncProc( "Imprimindo Registro " + cValToChar( nRegAtu ) + " De " + cValToChar( nTotReg ) + " [" + StrZero( Round( ( nRegAtu / nTotReg ) * 100 , 0 ) , 3 ) +"%]" )
 
-		oPrint:Say( nLin,020, (cTmp1)->PRODUTO			  				  ,oFonte)
-		oPrint:Say( nLin,070, SUBSTRING((cTmp1)->DESCRICAOP,1,40)		  ,oFonte)
-		oPrint:Say( nLin,300, (cTmp1)->UNIDADE				  			  ,oFonte)
-		oPrint:Say( nLin,350, "______" 						  			  ,oFonte)
-		oPrint:Say( nLin,400, "___________________"		  				  ,oFonte)
-		oPrint:Say( nLin,510, "____/____/____"							  ,oFonte)
+		oPrint:Say( nLin,020, (cTmp1)->PRODUTO			  				,oFonte)
+		oPrint:Say( nLin,110, SUBSTRING((cTmp1)->DESCRICAOP,1,50)		,oFonte)
+		oPrint:Say( nLin,470, (cTmp1)->UNIDADE				  			,oFonte)
+		oPrint:Say( nLin,505, "______________" 							,oFonte)
+		oPrint:Say( nLin,600, "______________________"					,oFonte)
+		oPrint:Say( nLin,730, "_____/_____/_____"						,oFonte)
 
 		nLin += REL_VERT_STD
 
@@ -127,37 +131,46 @@ If lOk
 
 		If  cLote == "L" .AND. cProduto <> (cTmp1)->PRODUTO
 
-			//Espaço para preencher mais um lote
-		oPrint:Say( nLin,350, "______" 						  			,oFonte)
-		oPrint:Say( nLin,400, "___________________"		  				,oFonte)
-		oPrint:Say( nLin,510, "____/____/____"							,oFonte)
+		//Espaço para preencher mais um lote
+		oPrint:Say( nLin,505, "______________" 							,oFonte)
+		oPrint:Say( nLin,600, "______________________"					,oFonte)
+		oPrint:Say( nLin,730, "_____/_____/_____"						,oFonte)
 
-			nLin += REL_VERT_STD
+		nLin += REL_VERT_STD
 
 		EndIf
 
 	EndDo
 
-	oPrint:Line(nLin,10,nLin,580,CLR_HGRAY,"-9")
-
-	nLin += (REL_VERT_STD * 3)
-
-	//Imprime linha das assinaturas e observações
-
-	oPrint:Say( nLin,020, "OBSERVACAO: __________________________________________________________________________________________________________________" ,oFonte10N)
-
+	nLin -= 10 //Coloco a linha mais proxima do ultimo registro
+	oPrint:Line(nLin,10,nLin,REL_RIGHT,CLR_HGRAY,"-9")
 	nLin += REL_VERT_STD
 
-	oPrint:Say( nLin,020, "________________________________________________________________________________________________________________________________" ,oFonte10N)
+	If nLin > REL_END
+		u_XRODAPE(@oPrint,"COMRX002.PRW","")
+		oPrint:EndPage()
+		ImpProxPag()//Monta cabeçario da proxima pagina
+	EndIf
 
+	//Imprime linha de assinatura e observações
+	oPrint:Say( nLin,020, "OBSERVAÇÃO:" ,oFonte10N)
+	oPrint:Line(nLin,085,nLin,REL_RIGHT,CLR_BLACK,"-9")
+	nLin += REL_VERT_STD
+
+	oPrint:Line(nLin,020,nLin,REL_RIGHT,CLR_BLACK,"-9")
 	nLin += (REL_VERT_STD * 2)
 
-	oPrint:Say( nLin,020, "NOME E ASSINATURA DO CONFERENTE: ____________________________________________________________________________________________" ,oFonte10N)
+	If nLin > REL_END
+		u_XRODAPE(@oPrint,"COMRX002.PRW","")
+		oPrint:EndPage()
+		ImpProxPag()//Monta cabeçario da proxima pagina
+	EndIf
 
+	oPrint:Say( nLin,020, "NOME E ASSINATURA DO CONFERENTE:" ,oFonte10N)
+	oPrint:Line(nLin,180,nLin,REL_RIGHT,CLR_BLACK,"-9")
 	nLin += (REL_VERT_STD * 2)
 
-	oPrint:Say( nLin,020, "DATA: ____/____/____            HORA: ____:____" ,oFonte10N)
-
+	oPrint:Say( nLin,020, "DATA: ______/______/______            HORA: _____:_____" ,oFonte10N)
 	nLin += REL_VERT_STD
 
 	u_XRODAPE(@oPrint,"COMRX002.PRW","")
@@ -178,14 +191,14 @@ Static Function ImpProxPag()
 	nPag++
 	oPrint:StartPage()
 	cSubTitle := "FORNECEDOR: " + cNomFor
-	nLin := u_XCABECA(@oPrint, "CONFERENCIA RECEBIMENTO - NOTA FISCAL: " + cDoc + cSerie , cSubTitle  , nPag)
+	nLin := u_XCABECA(@oPrint, "CONFERÊNCIA RECEBIMENTO - NOTA FISCAL: " + cDoc + cSerie , cSubTitle  , nPag)
 
-	oPrint:Say( nLin,020, "PRODUTO",oFonteN)
-	oPrint:Say( nLin,070, "DESCRICAO",oFonteN)
-	oPrint:Say( nLin,300, "UM",oFonteN)
-	oPrint:Say( nLin,350, "QUANT.",oFonteN)
-	oPrint:Say( nLin,400, "LOTE",oFonteN)
-	oPrint:Say( nLin,510, "VALIDADE",oFonteN)
+	oPrint:Say( nLin,020, "PRODUTO"		,oFonteN)
+	oPrint:Say( nLin,110, "DESCRICAO"	,oFonteN)
+	oPrint:Say( nLin,470, "UM"			,oFonteN)
+	oPrint:Say( nLin,505, "QUANTIDADE"	,oFonteN)
+	oPrint:Say( nLin,600, "LOTE"		,oFonteN)
+	oPrint:Say( nLin,730, "VALIDADE"	,oFonteN)
 
 	oPrint:line(nLin+5,REL_LEFT,nLin+5,REL_RIGHT )
 
@@ -205,7 +218,7 @@ cFiltro := "%AND D1_DOC = '" + cDoc + "' AND D1_SERIE = '" + cSerie + "' AND D1_
 
 BeginSql Alias cTmp1
 
-//Query com o tratamento das informações da tabela SD1 de entrada
+//Query com o tratamento das informações da tabela SD1 - Itens documento de entrada
 SELECT 'ENTRADA' AS TIPO,D1_FILIAL AS FILIAL,D1_TIPO AS TIPONF
 , D1_DOC AS NFISCAL, D1_SERIE AS SERIE, D1_ITEM AS ITEM, D1_COD AS PRODUTO, B1_RASTRO AS LOTE, D1_UM AS UNIDADE
 , AH_UMRES AS MEDIDA, B1_DESC AS DESCRICAOP, D1_QUANT AS QUANTIDADE,D1_VUNIT AS VLUNIT, D1_TOTAL AS VLTOTAL, D1_LOCAL AS ARMAZEM
@@ -253,9 +266,9 @@ Static Function ValidPerg(cPerg)
 	cPerg := PADR(cPerg,10)
 
 	//          Grupo Ordem Desc Por               Desc Espa   Desc Ingl  Variavel  Tipo  Tamanho  Decimal  PreSel  GSC  Valid   Var01       Def01     DefSpa01  DefEng01  CNT01  Var02  Def02     DefSpa02  DefEng02  CNT02  Var03  Def03  DefEsp03  DefEng03  CNT03     Var04  Def04  DefEsp04  DefEng04  CNT04  Var05  Def05  DefEsp05  DefEng05  CNT05  F3        PYME  GRPSXG   HELP  PICTURE  IDFIL
-	aAdd(aRegs,{cPerg,"01", "Nota Fiscal"		 , "",         "",        "mv_ch1", "C",  09,      00,      0,      "G", "",     "mv_par01", "",       "",       "",       "",    "",    "",       "",       "",       "",    "",    "",    "",       "",       "",       "",    "",    "",       "",       "",    "",    "",    "",       "",       "",    "SF101",       "",   "",      "",   "",      ""   })
+	aAdd(aRegs,{cPerg,"01", "Nota Fiscal"		 , "",         "",        "mv_ch1", "C",  09,      00,      0,      "G", "",     "mv_par01", "",       "",       "",       "",    "",    "",       "",       "",       "",    "",    "",    "",       "",       "",       "",    "",    "",       "",       "",    "",    "",    "",       "",       "",	"SF101",  "",   "",      "",   "",      ""   })
 	aAdd(aRegs,{cPerg,"02", "Serie"				 , "",         "",        "mv_ch2", "C",  03,      00,      0,      "G", "",     "mv_par02", "",       "",       "",       "",    "",    "",       "",       "",       "",    "",    "",    "",       "",       "",       "",    "",    "",       "",       "",    "",    "",    "",       "",       "",    "",       "",   "",      "",   "",      ""   })
-	aAdd(aRegs,{cPerg,"03", "Fornecedor"		 , "",         "",        "mv_ch3", "C",  06,      00,      0,      "G", "",     "mv_par03", "",       "",       "",       "",    "",    "",       "",       "",       "",    "",    "",    "",       "",       "",       "",    "",    "",       "",       "",    "",    "",    "",       "",       "",    "SA2",       "",   "",      "",   "",      ""   })
+	aAdd(aRegs,{cPerg,"03", "Fornecedor"		 , "",         "",        "mv_ch3", "C",  06,      00,      0,      "G", "",     "mv_par03", "",       "",       "",       "",    "",    "",       "",       "",       "",    "",    "",    "",       "",       "",       "",    "",    "",       "",       "",    "",    "",    "",       "",       "",    "SA2",    "",   "",      "",   "",      ""   })
 	aAdd(aRegs,{cPerg,"04", "Loja"				 , "",         "",        "mv_ch4", "C",  02,      00,      0,      "G", "",     "mv_par04", "",       "",       "",       "",    "",    "",       "",       "",       "",    "",    "",    "",       "",       "",       "",    "",    "",       "",       "",    "",    "",    "",       "",       "",    "",       "",   "",      "",   "",      ""   })
 	aAdd(aRegs,{cPerg,"05", "Destino do(s) Arq.?", "",         "",        "mv_ch5", "C",  99,      00,      0,      "G", "",     "mv_par05", "",       "",       "",       "",    "",    "",       "",       "",       "",    "",    "",    "",       "",       "",       "",    "",    "",       "",       "",    "",    "",    "",       "",       "",    "",       "",   "",      "",   "",      ""   })
 
@@ -347,7 +360,6 @@ User Function XCABECA(oPrint,cTitle,cSubTitle,nPage, lBlackWhite)
 
 Return 130
 
-
 /*/{Protheus.doc} XRODAPE
 	Monta um rodapÃ© prÃ©-definido de acordo com a orientaÃ§Ã£o do objeto
 	@author    Rafael França
@@ -370,7 +382,6 @@ User Function XRODAPE(oPrint,cFonteBase,cMsgPad)
 	EndIf
 
 Return
-
 
 User function xInspFonte(cFonte)
 
