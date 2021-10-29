@@ -3,6 +3,7 @@
 
 //Rafael França - 29/10/2021 - Relatório para saber o saldo do Kit de acordo com saldos dos componentes/partes
 //SIGAEST -> Relatorios -> Especificos -> Saldo por Kit
+//Teste github
 
 User Function ESTRX002()
 
